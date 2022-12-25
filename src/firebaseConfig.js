@@ -4,7 +4,9 @@ import { getAnalytics } from "firebase/analytics";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
-import {getAuth, GoogleAuthProvider, signInWithPopup} from 'firebase/auth';
+import {getAuth, GoogleAuthProvider, signInWithPopup, signOut} from 'firebase/auth';
+
+import { useNavigate } from "react-router-dom";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -23,9 +25,10 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 export const auth = getAuth(app);
 
-const provider = new GoogleAuthProvider();
+export const provider = new GoogleAuthProvider();
 
 export const signInWithGoogle = () => {
+    const navigate = useNavigate();
     signInWithPopup(auth, provider).then((result) => {
         const name = result.user.displayName;
         const email = result.user.email;
@@ -34,7 +37,20 @@ export const signInWithGoogle = () => {
         localStorage.setItem('name', name);
         localStorage.setItem('email', email);
         localStorage.setItem('profilePic', profilePic);
+    }).then(() => {
+        navigate('/home');
     }).catch((error) => {
         console.log(error);
     });
 };
+
+export const logOut = () => {
+    signOut(auth).then(() => {
+        localStorage.setItem('name', '');
+        localStorage.setItem('email', '');
+        localStorage.setItem('profilePic', '');
+        console.log('logout successfully');
+    }).catch(() => {
+        console.log('error');
+    })
+}
