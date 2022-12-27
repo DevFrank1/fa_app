@@ -11,13 +11,15 @@ import {
 import Signup from './components/signup/Signup';
 import Home from './components/home/Home';
 
+import { ProSidebarProvider } from 'react-pro-sidebar';
+
 function App() {
 
   return (
     <div className="app">
       <BrowserRouter>
         <Routes>
-          <Route path='/home' element={<Home/>}/>
+          <Route path='/home' element={<Home />} />
           <Route exact path='/' element={<Signup />} />
         </Routes>
       </BrowserRouter>
