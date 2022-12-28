@@ -27,6 +27,7 @@ const SideBar = () => {
                     <SubMenu label='Activity'>
                         <MenuItem>Revenue</MenuItem>
                         <MenuItem>Expense</MenuItem>
+                        <MenuItem>Profit</MenuItem>
                     </SubMenu>
                     <MenuItem>Timeline</MenuItem>
                     <MenuItem>Calendar</MenuItem>
