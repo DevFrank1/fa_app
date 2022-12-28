@@ -1,39 +1,47 @@
-import { Avatar, Box } from '@mui/material';
+import { Avatar, Box, Divider } from '@mui/material';
 import React from 'react';
 import './sidebar.css';
 
-import { Sidebar, sidebarClasses, Menu, menuClasses, MenuItem } from 'react-pro-sidebar';
+import { Sidebar, sidebarClasses, SubMenu, Menu, menuClasses, MenuItem } from 'react-pro-sidebar';
 
 const SideBar = () => {
     return (
         <Box>
             <Sidebar rootStyles={{
                 [`.${sidebarClasses.container}`]: {
-                    backgroundColor: 'red',
+                    backgroundColor: 'grey',
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    padding: '1rem'
                 },
                 height: '100%',
             }}>
                 <Box>
-                    <Avatar/>
+                    <Avatar sx={{ width: '90px', height: '90px' }} />
                 </Box>
+                <Divider sx={{ height: '1.5px', width: '100%', bgcolor: 'yellow' }} />
                 <Menu>
-                    <MenuItem>Dashboard</MenuItem>
-                    <MenuItem>Dashboard</MenuItem>
-                    <MenuItem>Dashboard</MenuItem>
-                    <MenuItem>Dashboard</MenuItem>
+                    <MenuItem>Overview</MenuItem>
+                    <SubMenu label='Activity'>
+                        <MenuItem>Revenue</MenuItem>
+                        <MenuItem>Expense</MenuItem>
+                    </SubMenu>
+                    <MenuItem>Timeline</MenuItem>
+                    <MenuItem>Calendar</MenuItem>
+                    <MenuItem>Todo List</MenuItem>
+                    <MenuItem>Pomodoro Timer</MenuItem>
                 </Menu>
+                <Divider sx={{ height: '1.5px', width: '100%', bgcolor: 'yellow' }} />
                 <Menu rootStyles={{
-                [`.${menuClasses.container}`]: {
-                    
-                },
-                width: '100%',
-            }}>
-                    <MenuItem>Dashboard</MenuItem>
-                    <MenuItem>Dashboard</MenuItem>
+                    [`.${menuClasses.container}`]: {
+
+                    },
+                    width: '100%',
+                }}>
+                    <MenuItem>Support</MenuItem>
+                    <MenuItem>Logout</MenuItem>
                 </Menu>
             </Sidebar>
         </Box>
