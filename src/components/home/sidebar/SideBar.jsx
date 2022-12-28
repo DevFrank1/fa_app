@@ -30,6 +30,7 @@ const SideBar = () => {
                         <MenuItem>Profit</MenuItem>
                         <MenuItem>Net Profit</MenuItem>
                         <MenuItem>Analytics</MenuItem>
+                        <MenuItem>Analytics 1.11</MenuItem>
                     </SubMenu>
                     <MenuItem>Timeline</MenuItem>
                     <MenuItem>Calendar</MenuItem>
