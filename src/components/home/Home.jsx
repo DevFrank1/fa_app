@@ -11,6 +11,18 @@ import SideBar from './sidebar/SideBar';
 import { ProSidebarProvider } from 'react-pro-sidebar';
 import Navbar from './navbar/Navbar';
 
+import {
+    BrowserRouter as Router,
+    Routes,
+    Route,
+    Link,
+    BrowserRouter
+} from "react-router-dom";
+import Overview from './overview/Overview';
+import Timeline from './timeline/Timeline';
+import Calendar from './calendar/Calendar';
+import Todolist from './todolist/Todolist';
+
 const Home = () => {
 
     const navigate = useNavigate();
@@ -38,10 +50,16 @@ const Home = () => {
                 <SideBar />
                 <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', }}>
                     <Navbar />
-                    <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                    {/* <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}>
                         <Typography>Home</Typography>
                         <Button variant='contained' onClick={logOut}>Log out</Button>
-                    </Box>
+                    </Box> */}
+                        <Routes location='/home'>
+                            <Route index path='/home/overview' element={<Overview />} />
+                            <Route path='/home/timeline' element={<Timeline />} />
+                            <Route path='/home/calendar' element={<Calendar />} />
+                            <Route path='/home/todolist' element={<Todolist />} />
+                        </Routes>
                 </Box>
             </Box>
         </ProSidebarProvider>

@@ -2,6 +2,8 @@ import { Avatar, Box, Divider } from '@mui/material';
 import React from 'react';
 import './sidebar.css';
 
+import { Link } from 'react-router-dom';
+
 import { Sidebar, sidebarClasses, SubMenu, Menu, menuClasses, MenuItem } from 'react-pro-sidebar';
 
 const SideBar = () => {
@@ -23,18 +25,18 @@ const SideBar = () => {
                 </Box>
                 <Divider sx={{ height: '1.5px', width: '100%', bgcolor: 'yellow' }} />
                 <Menu>
-                    <MenuItem>Overview</MenuItem>
+                    <MenuItem routerLink={<Link to='/home/overview'/>}>Overview</MenuItem>
                     <SubMenu label='Activity'>
                         <MenuItem>Revenue</MenuItem>
                         <MenuItem>Expense</MenuItem>
-                        <MenuItem>Profit</MenuItem>
+                        {/* <MenuItem>Profit</MenuItem>
                         <MenuItem>Net Profit</MenuItem>
                         <MenuItem>Analytics</MenuItem>
                         <MenuItem>Analytics 1.11</MenuItem>
                         <MenuItem>Analytics 1.111</MenuItem>
                         <MenuItem>Analytics 1.111100</MenuItem>
                         <MenuItem>Analytics 1.17</MenuItem>
-                        <MenuItem>Analytics 1.1711</MenuItem>
+                        <MenuItem>Analytics 1.1711</MenuItem> */}
                     </SubMenu>
                     <MenuItem>Timeline</MenuItem>
                     <MenuItem>Calendar</MenuItem>
