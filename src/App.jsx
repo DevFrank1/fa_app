@@ -12,17 +12,17 @@ import Signup from './components/signup/Signup';
 import Home from './components/home/Home';
 
 import { ProSidebarProvider } from 'react-pro-sidebar';
+import NotFound from './components/home/notfound/NotFound';
 
 function App() {
 
   return (
     <div className="app">
-      <BrowserRouter>
         <Routes>
-          <Route path='/home' element={<Home />} />
+          <Route path='/home/*' element={<Home />} />
           <Route exact path='/' element={<Signup />} />
+          <Route path='*' element={<NotFound />} />
         </Routes>
-      </BrowserRouter>
     </div>
   )
 }

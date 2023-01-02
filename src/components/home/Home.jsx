@@ -22,6 +22,7 @@ import Overview from './overview/Overview';
 import Timeline from './timeline/Timeline';
 import Calendar from './calendar/Calendar';
 import Todolist from './todolist/Todolist';
+import NotFound from './notfound/NotFound';
 
 const Home = () => {
 
@@ -54,11 +55,12 @@ const Home = () => {
                         <Typography>Home</Typography>
                         <Button variant='contained' onClick={logOut}>Log out</Button>
                     </Box> */}
-                        <Routes location='/home'>
-                            <Route index path='/home/overview' element={<Overview />} />
-                            <Route path='/home/timeline' element={<Timeline />} />
-                            <Route path='/home/calendar' element={<Calendar />} />
-                            <Route path='/home/todolist' element={<Todolist />} />
+                        <Routes>
+                            <Route path='overview' element={<Overview />} />
+                            <Route path='timeline' element={<Timeline />} />
+                            <Route path='calendar' element={<Calendar />} />
+                            <Route path='todolist' element={<Todolist />} />
+                            <Route path='*' element={<NotFound/>}/>
                         </Routes>
                 </Box>
             </Box>
