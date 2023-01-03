@@ -1,0 +1,11 @@
+.reorder {
+    -ms-overflow-style: none;
+    scrollbar-width: none; 
+
+    overflow-y: scroll;
+   
+}
+
+.reorder::-webkit-scrollbar {
+     display: none;
+}

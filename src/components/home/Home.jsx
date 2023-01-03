@@ -47,7 +47,7 @@ const Home = () => {
 
     return (
         <ProSidebarProvider>
-            <Box className='home' sx={{ display: 'flex', width: '100%', height: '100%', }}>
+            <Box className='home' sx={{ display: 'flex', width: '100%', height: '100vh', }}>
                 <SideBar />
                 <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', }}>
                     <Navbar />
