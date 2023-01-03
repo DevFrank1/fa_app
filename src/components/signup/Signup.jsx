@@ -26,7 +26,7 @@ const Signup = () => {
             localStorage.setItem('email', email);
             localStorage.setItem('profilePic', profilePic);
         }).then(() => {
-            navigate('/home');
+            navigate('/home/overview    ');
         }).catch((error) => {
             console.log(error);
         });

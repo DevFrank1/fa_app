@@ -19,7 +19,7 @@ import {
     BrowserRouter
 } from "react-router-dom";
 import Overview from './overview/Overview';
-import Timeline from './timeline/Timeline';
+import TimeLine from './timeline/Timeline';
 import Calendar from './calendar/Calendar';
 import Todolist from './todolist/Todolist';
 import NotFound from './notfound/NotFound';
@@ -57,7 +57,7 @@ const Home = () => {
                     </Box> */}
                         <Routes>
                             <Route path='overview' element={<Overview />} />
-                            <Route path='timeline' element={<Timeline />} />
+                            <Route path='timeline' element={<TimeLine />} />
                             <Route path='calendar' element={<Calendar />} />
                             <Route path='todolist' element={<Todolist />} />
                             <Route path='*' element={<NotFound/>}/>
