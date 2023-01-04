@@ -13,10 +13,15 @@ import { useNavigate } from "react-router-dom";
 
 import { AppContext } from '../../context/AppContext';
 
+import { db } from '../../firebaseConfig';
+import { collection, addDoc, setDoc, doc } from '@firebase/firestore';
+
 
 const Signup = () => {
 
     const { setUserDisplayName, setUserID, setUserEmail, setUserPhotoUrl } = useContext(AppContext);
+
+    const usersCollectionRef = collection(db, 'users');
 
     const navigate = useNavigate();
 
@@ -35,6 +40,8 @@ const Signup = () => {
             setUserID(result.user.uid);
             setUserEmail(result.user.email);
             setUserPhotoUrl(result.user.photoURL);
+
+            setDoc(doc(db, 'users', `${result.user.uid}`), { id: `${result.user.uid}` });
         }).then(() => {
             navigate('/home/overview    ');
         }).catch((error) => {
