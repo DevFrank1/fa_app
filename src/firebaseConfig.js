@@ -27,30 +27,30 @@ export const auth = getAuth(app);
 
 export const provider = new GoogleAuthProvider();
 
-export const signInWithGoogle = () => {
-    const navigate = useNavigate();
-    signInWithPopup(auth, provider).then((result) => {
-        const name = result.user.displayName;
-        const email = result.user.email;
-        const profilePic = result.user.photoURL;
+// export const signInWithGoogle = () => {
+//     const navigate = useNavigate();
+//     signInWithPopup(auth, provider).then((result) => {
+//         const name = result.user.displayName;
+//         const email = result.user.email;
+//         const profilePic = result.user.photoURL;
 
-        localStorage.setItem('name', name);
-        localStorage.setItem('email', email);
-        localStorage.setItem('profilePic', profilePic);
-    }).then(() => {
-        navigate('/home');
-    }).catch((error) => {
-        console.log(error);
-    });
-};
+//         localStorage.setItem('name', name);
+//         localStorage.setItem('email', email);
+//         localStorage.setItem('profilePic', profilePic);
+//     }).then(() => {
+//         navigate('/home');
+//     }).catch((error) => {
+//         console.log(error);
+//     });
+// };
 
-export const logOut = () => {
-    signOut(auth).then(() => {
-        localStorage.setItem('name', '');
-        localStorage.setItem('email', '');
-        localStorage.setItem('profilePic', '');
-        console.log('logout successfully');
-    }).catch(() => {
-        console.log('error');
-    })
-}
+// export const logOut = () => {
+//     signOut(auth).then(() => {
+//         localStorage.setItem('name', '');
+//         localStorage.setItem('email', '');
+//         localStorage.setItem('profilePic', '');
+//         console.log('logout successfully');
+//     }).catch(() => {
+//         console.log('error');
+//     })
+// }

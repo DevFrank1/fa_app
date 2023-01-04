@@ -21,6 +21,7 @@ const SideBar = () => {
             localStorage.setItem('name', '');
             localStorage.setItem('email', '');
             localStorage.setItem('profilePic', '');
+            localStorage.setItem('id', '');
             console.log('logout successfully');
         }).then(() => {
             navigate('/');

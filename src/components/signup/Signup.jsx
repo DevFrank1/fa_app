@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import './signup.css';
 
 import Box from '@mui/material/Box';
@@ -11,8 +11,12 @@ import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/
 
 import { useNavigate } from "react-router-dom";
 
+import { AppContext } from '../../context/AppContext';
+
 
 const Signup = () => {
+
+    const { setUserDisplayName, setUserID, setUserEmail, setUserPhotoUrl } = useContext(AppContext);
 
     const navigate = useNavigate();
 
@@ -21,10 +25,16 @@ const Signup = () => {
             const name = result.user.displayName;
             const email = result.user.email;
             const profilePic = result.user.photoURL;
+            const id = result.user.uid;
 
             localStorage.setItem('name', name);
             localStorage.setItem('email', email);
             localStorage.setItem('profilePic', profilePic);
+            localStorage.setItem('id', id);
+            setUserDisplayName(result.user.displayName);
+            setUserID(result.user.uid);
+            setUserEmail(result.user.email);
+            setUserPhotoUrl(result.user.photoURL);
         }).then(() => {
             navigate('/home/overview    ');
         }).catch((error) => {
