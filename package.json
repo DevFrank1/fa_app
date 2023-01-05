@@ -25,7 +25,8 @@
     "react-dom": "^18.2.0",
     "react-pro-sidebar": "^1.0.0-alpha.9",
     "react-router-dom": "^6.6.1",
-    "rsuite": "^5.24.0"
+    "rsuite": "^5.24.0",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.26",
