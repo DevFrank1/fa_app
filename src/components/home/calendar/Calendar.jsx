@@ -1,4 +1,4 @@
-import { Box } from '@mui/material';
+import { Box, IconButton, Input } from '@mui/material';
 import React, { useState } from 'react';
 import './calendar.css';
 
@@ -8,16 +8,86 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { v4 as uuid } from 'uuid';
 
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
+import AddIcon from '@mui/icons-material/Add';
+
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
+
 const Calendar = () => {
   const [events, setEvents] = useState([]);
+  const [eventInfo, setEventInfo] = useState('');
 
-  const handleSelect = (info) => {
-    const { start, end } = info;
-    const eventNamePrompt = prompt('Enter');
-    if (eventNamePrompt) {
-      setEvents([...events, { start, end, title: eventNamePrompt, id: uuid() }])
-    }
+  const [open, setOpen] = useState(false);
+  const handleOpen = (info) => {
+    setEventInfo(info);
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+    setData('');
+  };
+
+  const [data, setData] = useState('');
+
+  const handleChange = (b) => {
+    setData(b);
   }
+
+  // const addNewData = (info) => {
+  //   const { start, end } = info;
+  //   handleOpen().then(() => {
+  //     return (
+  //       <Modal
+  //         open={open}
+  //         onClose={handleClose}
+  //       >
+  //         <Box sx={style}>
+  //           <Typography>add calendar</Typography>
+  //           <Input
+  //             value={data}
+  //             onChange={e => handleChange(e.target.value)}
+  //             disableUnderline
+  //           />
+  //           <IconButton onClick={addData}>
+  //             <AddIcon />
+  //           </IconButton>
+  //         </Box>
+  //       </Modal>
+  //     )
+  //   }).then(() => {
+  //     setEvents([...events, { start, end, title: data, id: uuid() }]);
+  //   }).then(() => {
+  //     setOpen(false);
+  //     setData('');
+  //   })
+  // }
+
+  const addData = () => {
+    const { start, end } = eventInfo;
+    setEvents([...events, { start, end, title: data, id: uuid() }]);
+    setOpen(false);
+  }
+
+  // const handleSelect = (info) => {
+  //   const { start, end } = info;
+  //   // const eventNamePrompt = prompt('Enter');
+  //   handleOpen();
+  //   if (eventNamePrompt) {
+  //     setEvents([...events, { start, end, title: eventNamePrompt, id: uuid() }])
+  //   }
+  // }
 
   return (
     <Box sx={{ display: 'block', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%', padding: '1rem' }}>
@@ -33,9 +103,25 @@ const Calendar = () => {
         contentHeight='100%'
         editable
         selectable
-        select={handleSelect}
+        select={handleOpen}
         events={events}
       />
+      <Modal
+        open={open}
+        onClose={handleClose}
+      >
+        <Box sx={style}>
+          <Typography>add calendar</Typography>
+          <Input
+            value={data}
+            onChange={e => handleChange(e.target.value)}
+            disableUnderline
+          />
+          <IconButton onClick={addData}>
+            <AddIcon />
+          </IconButton>
+        </Box>
+      </Modal>
     </Box>
   )
 }
