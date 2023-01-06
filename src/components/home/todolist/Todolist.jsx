@@ -1,5 +1,5 @@
 import { Box, Container, Checkbox, IconButton, List, ListItem, ListItemIcon, ListItemText, Toolbar, Typography, Input } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './todolist.css';
 
 import Modal from '@mui/material/Modal';
@@ -10,6 +10,11 @@ import AddIcon from '@mui/icons-material/Add';
 
 import { Reorder } from "framer-motion";
 import Item from './Item';
+
+import { db, auth } from '../../../firebaseConfig';
+import { collection, addDoc, setDoc, doc, getDoc, getDocs } from '@firebase/firestore';
+
+import { v4 as uuid } from 'uuid';
 
 const initialItems = [];
 
@@ -29,21 +34,50 @@ const style = {
 
 const Todolist = () => {
 
-  const [items, setItems] = useState(initialItems);
+  const [items, setItems] = useState([]);
   const [todoValue, setTodoValue] = useState('');
+
+  const [item, setItem] = useState('');
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setOpen(false);
+    setTodoValue('');
+  };
 
   const handleChange = (data) => {
     setTodoValue(data);
   }
 
-  const addTodo = () => {
+  const addTodo = async () => {
     setItems(arr => [...arr, todoValue]);
-    setOpen(false); 
+    setOpen(false);
+    await addDoc(collection(db, `users/${localStorage.getItem('id')}/todo`), {
+      name: `${todoValue}`,
+    });
+    setTodoValue('');
   }
+
+  const getDataFromFireStore = async () => {
+    const querySnapshot = await getDocs(collection(db, `users/${localStorage.getItem('id')}/todo`));
+    querySnapshot.forEach((doc) => {
+      setItems([doc.data().name, ...items]);
+      // doc.data() is never undefined for query doc snapshots
+      console.log(doc.id, " => ", doc.data().name);
+    });
+    // console.log(querySnapshot.data());
+  }
+
+  useEffect(() => {
+    // const docRef = doc(db, `users/${auth.currentUser.uid}/todo`)
+    getDataFromFireStore();
+  }, []);
+
+  useEffect(() => {
+    // const docRef = doc(db, `users/${auth.currentUser.uid}/todo`)
+  }, [items])
+
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%', height: 'calc(100vh - 64px)' }}>
@@ -79,7 +113,7 @@ const Todolist = () => {
       </Toolbar>
       <Reorder.Group className='reorder' axis="y" onReorder={setItems} values={items} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', width: '100%', height: '100%', padding: '1rem', }}>
         {items.map((item) => (
-          <Item key={item} item={item} />
+          <Item key={uuid()} item={item} />
         ))}
       </Reorder.Group>
     </Box>

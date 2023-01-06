@@ -1,4 +1,4 @@
-import { Box, IconButton, Input } from '@mui/material';
+import { Avatar, Box, IconButton, Input } from '@mui/material';
 import React, { useState } from 'react';
 import './calendar.css';
 
@@ -37,6 +37,16 @@ const Calendar = () => {
 
   const deleteEvent = (click) => {
     click.event.remove();
+  }
+
+  function renderDayViewDetail(event) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', }}>
+        <Avatar sx={{ width: '11px', height: '11px', bgcolor: '#ff1122', color: '#ff1122', m: '0 0.5rem' }} />
+        <Typography mr='0.5rem' variant='h6' fontSize='14px'>{event.timeText}</Typography>
+        <Typography variant='h6' fontSize='14px'>{event.event.title}</Typography>
+      </Box>
+    )
   }
 
   const handleClose = () => {
@@ -112,6 +122,7 @@ const Calendar = () => {
         select={handleOpen}
         events={events}
         eventClick={deleteEvent}
+        eventContent={renderDayViewDetail}
       />
       <Modal
         open={open}
