@@ -34,6 +34,11 @@ const Calendar = () => {
     setEventInfo(info);
     setOpen(true);
   };
+
+  const deleteEvent = (click) => {
+    click.event.remove();
+  }
+
   const handleClose = () => {
     setOpen(false);
     setData('');
@@ -103,8 +108,10 @@ const Calendar = () => {
         contentHeight='100%'
         editable
         selectable
+        selectMirror
         select={handleOpen}
         events={events}
+        eventClick={deleteEvent}
       />
       <Modal
         open={open}
