@@ -12,7 +12,7 @@ import { Reorder } from "framer-motion";
 import Item from './Item';
 
 import { db, auth } from '../../../firebaseConfig';
-import { collection, addDoc, setDoc, doc, getDoc, getDocs } from '@firebase/firestore';
+import { collection, addDoc, setDoc, doc, getDoc, deleteDoc, getDocs } from '@firebase/firestore';
 
 import { v4 as uuid } from 'uuid';
 
@@ -51,32 +51,45 @@ const Todolist = () => {
   }
 
   const addTodo = async () => {
-    setItems(arr => [...arr, todoValue]);
+    // setItems(arr => [...arr, todoValue]);
     setOpen(false);
     await addDoc(collection(db, `users/${localStorage.getItem('id')}/todo`), {
       name: `${todoValue}`,
     });
     setTodoValue('');
+    getDataFromFireStore();
   }
 
   const getDataFromFireStore = async () => {
+    setItems([]);
     const querySnapshot = await getDocs(collection(db, `users/${localStorage.getItem('id')}/todo`));
-    querySnapshot.forEach((doc) => {
-      setItems([doc.data().name, ...items]);
-      // doc.data() is never undefined for query doc snapshots
-      console.log(doc.id, " => ", doc.data().name);
+    // querySnapshot.forEach((doc) => {
+    //   setItems(aff => [...aff, doc.data().name]);
+    //   // doc.data() is never undefined for query doc snapshots
+    //   console.log(doc.id, " => ", doc.data().name);
+    // });
+    const newArray = querySnapshot.docs.map((doc) => {
+      return {
+        id: doc.id,
+        ...doc.data(),
+      }
     });
+    setItems(newArray);
     // console.log(querySnapshot.data());
   }
+
+  // const deleteDataFromFirestore = async (dataId) => {
+  //   await deleteDoc(doc(collection(db, `users/${localStorage.getItem('id')}/todo`), `${dataId}`));
+  // }
 
   useEffect(() => {
     // const docRef = doc(db, `users/${auth.currentUser.uid}/todo`)
     getDataFromFireStore();
   }, []);
 
-  useEffect(() => {
-    // const docRef = doc(db, `users/${auth.currentUser.uid}/todo`)
-  }, [items])
+  // useEffect(() => {
+  //   // const docRef = doc(db, `users/${auth.currentUser.uid}/todo`)
+  // }, [items])
 
 
   return (

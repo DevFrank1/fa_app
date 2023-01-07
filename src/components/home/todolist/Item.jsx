@@ -6,12 +6,19 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useMotionValue, Reorder } from "framer-motion";
 import { useRaisedShadow } from "./Shadow.jsx";
 
+import { db, auth } from '../../../firebaseConfig';
+import { collection, doc, deleteDoc } from '@firebase/firestore';
 
-const Item = ({ item }) => {
+
+const Item = ({ item, }) => {
     const y = useMotionValue(0);
     const boxShadow = useRaisedShadow(y);
+
+    const deleteDataFromFirestore = async (dataId) => {
+        await deleteDoc(doc(collection(db, `users/${localStorage.getItem('id')}/todo`), `${dataId}`));
+    }
     return (
-        <Reorder.Item value={item} id={item} style={{
+        <Reorder.Item value={item} id={item.id} style={{
             listStyle: 'none',
             width: '100%',
             margin: '0.2rem',
@@ -26,6 +33,7 @@ const Item = ({ item }) => {
                     bgcolor: '#aaaaaa',
                     width: '100%',
                     borderRadius: '15px',
+                    zIndex: '1',
                     '&:hover': {
                         bgcolor: '#baff23',
                         scale: '1.01',
@@ -42,9 +50,9 @@ const Item = ({ item }) => {
                     alignItems: 'center',
                 }}>
                     <Checkbox edge='start' sx={{ mr: '1rem' }} />
-                    <Typography sx={{ textDecoration: 'line-through', }}>{item}</Typography>
+                    <Typography sx={{ textDecoration: 'line-through', }}>{item.name}</Typography>
                 </Box>
-                <IconButton edge='end'>
+                <IconButton edge='end' onClick={() => deleteDataFromFirestore(item.id)}>
                     <DeleteIcon />
                 </IconButton>
             </Container>
