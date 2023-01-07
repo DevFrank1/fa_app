@@ -78,9 +78,10 @@ const Todolist = () => {
     // console.log(querySnapshot.data());
   }
 
-  // const deleteDataFromFirestore = async (dataId) => {
-  //   await deleteDoc(doc(collection(db, `users/${localStorage.getItem('id')}/todo`), `${dataId}`));
-  // }
+  const deleteDataFromFirestore = async (dataId) => {
+    await deleteDoc(doc(collection(db, `users/${localStorage.getItem('id')}/todo`), `${dataId}`));
+    getDataFromFireStore();
+  }
 
   useEffect(() => {
     // const docRef = doc(db, `users/${auth.currentUser.uid}/todo`)
@@ -126,7 +127,7 @@ const Todolist = () => {
       </Toolbar>
       <Reorder.Group className='reorder' axis="y" onReorder={setItems} values={items} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', width: '100%', height: '100%', padding: '1rem', }}>
         {items.map((item) => (
-          <Item key={uuid()} item={item} />
+          <Item key={uuid()} item={item} deleteFunction={deleteDataFromFirestore} />
         ))}
       </Reorder.Group>
     </Box>

@@ -10,13 +10,13 @@ import { db, auth } from '../../../firebaseConfig';
 import { collection, doc, deleteDoc } from '@firebase/firestore';
 
 
-const Item = ({ item, }) => {
+const Item = ({ item, deleteFunction }) => {
     const y = useMotionValue(0);
     const boxShadow = useRaisedShadow(y);
 
-    const deleteDataFromFirestore = async (dataId) => {
-        await deleteDoc(doc(collection(db, `users/${localStorage.getItem('id')}/todo`), `${dataId}`));
-    }
+    // const deleteDataFromFirestore = async (dataId) => {
+    //     await deleteDoc(doc(collection(db, `users/${localStorage.getItem('id')}/todo`), `${dataId}`));
+    // }
     return (
         <Reorder.Item value={item} id={item.id} style={{
             listStyle: 'none',
@@ -52,7 +52,7 @@ const Item = ({ item, }) => {
                     <Checkbox edge='start' sx={{ mr: '1rem' }} />
                     <Typography sx={{ textDecoration: 'line-through', }}>{item.name}</Typography>
                 </Box>
-                <IconButton edge='end' onClick={() => deleteDataFromFirestore(item.id)}>
+                <IconButton edge='end' onClick={() => deleteFunction(item.id)}>
                     <DeleteIcon />
                 </IconButton>
             </Container>
