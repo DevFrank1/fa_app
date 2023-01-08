@@ -23,6 +23,7 @@ import TimeLine from './timeline/Timeline';
 import Calendar from './calendar/Calendar';
 import Todolist from './todolist/Todolist';
 import NotFound from './notfound/NotFound';
+import Activity from './activity/Activity';
 
 const Home = () => {
 
@@ -55,13 +56,14 @@ const Home = () => {
                         <Typography>Home</Typography>
                         <Button variant='contained' onClick={logOut}>Log out</Button>
                     </Box> */}
-                        <Routes>
-                            <Route path='overview' element={<Overview />} />
-                            <Route path='timeline' element={<TimeLine />} />
-                            <Route path='calendar' element={<Calendar />} />
-                            <Route path='todolist' element={<Todolist />} />
-                            <Route path='*' element={<NotFound/>}/>
-                        </Routes>
+                    <Routes>
+                        <Route path='overview' element={<Overview />} />
+                        <Route path='activity' element={<Activity />} />
+                        <Route path='timeline' element={<TimeLine />} />
+                        <Route path='calendar' element={<Calendar />} />
+                        <Route path='todolist' element={<Todolist />} />
+                        <Route path='*' element={<NotFound />} />
+                    </Routes>
                 </Box>
             </Box>
         </ProSidebarProvider>

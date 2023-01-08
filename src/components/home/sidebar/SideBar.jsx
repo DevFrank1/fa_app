@@ -1,5 +1,5 @@
 import { Avatar, Box, Divider } from '@mui/material';
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import './sidebar.css';
 
 import { Link } from 'react-router-dom';
@@ -53,10 +53,10 @@ const SideBar = () => {
                 <Divider sx={{ height: '1.5px', width: '100%', bgcolor: 'yellow' }} />
                 <Menu>
                     <MenuItem routerLink={<Link to='/home/overview' />}>Overview</MenuItem>
-                    <SubMenu label='Activity'>
+                    {/* <SubMenu label='Activity'>
                         <MenuItem>Revenue</MenuItem>
-                        <MenuItem>Expense</MenuItem>
-                        {/* <MenuItem>Profit</MenuItem>
+                        <MenuItem>Expense</MenuItem> */}
+                    {/* <MenuItem>Profit</MenuItem>
                         <MenuItem>Net Profit</MenuItem>
                         <MenuItem>Analytics</MenuItem>
                         <MenuItem>Analytics 1.11</MenuItem>
@@ -64,7 +64,8 @@ const SideBar = () => {
                         <MenuItem>Analytics 1.111100</MenuItem>
                         <MenuItem>Analytics 1.17</MenuItem>
                         <MenuItem>Analytics 1.1711</MenuItem> */}
-                    </SubMenu>
+                    {/* </SubMenu> */}
+                    <MenuItem routerLink={<Link to='/home/activity' />}>Activity</MenuItem>
                     <MenuItem routerLink={<Link to='/home/timeline' />}>Timeline</MenuItem>
                     <MenuItem routerLink={<Link to='/home/calendar' />}>Calendar</MenuItem>
                     <MenuItem routerLink={<Link to='/home/todolist' />}>Todo List</MenuItem>
