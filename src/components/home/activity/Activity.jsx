@@ -1,10 +1,22 @@
 import { Box } from '@mui/material';
-import React from 'react';
+import React, { useState } from 'react';
 import './activity.css';
 import ActivityCalendar from 'react-activity-calendar';
 import Tooltip from 'react-tooltip';
 
 const Activity = () => {
+
+    const [selectedDate, setselectedDate] = useState();
+    const [totalDate, settotalDate] = useState([]);
+
+    function addDateObject(count, date, level) {
+        var obj = {
+            count: count,
+            date: date,
+            level: level,
+        }
+        return obj;
+    }
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%', padding: '1rem' }}>
             <ActivityCalendar
