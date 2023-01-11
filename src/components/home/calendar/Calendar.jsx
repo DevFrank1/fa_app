@@ -1,5 +1,5 @@
 import { Avatar, Box, IconButton, Input } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './calendar.css';
 
 import FullCalendar from '@fullcalendar/react';
@@ -12,6 +12,10 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import AddIcon from '@mui/icons-material/Add';
+
+import { db, auth } from '../../../firebaseConfig';
+import { collection, addDoc, setDoc, doc, getDoc, updateDoc, deleteDoc, getDocs } from '@firebase/firestore';
+import { async } from '@firebase/util';
 
 const style = {
   position: 'absolute',
@@ -33,6 +37,7 @@ const Calendar = () => {
   const handleOpen = (info) => {
     setEventInfo(info);
     setOpen(true);
+    console.log(info)
   };
 
   const deleteEvent = (click) => {
@@ -89,11 +94,57 @@ const Calendar = () => {
   //   })
   // }
 
-  const addData = () => {
-    const { start, end } = eventInfo;
-    setEvents([...events, { start, end, title: data, id: uuid() }]);
+  const addData = async () => {
+    const { startStr, endStr } = eventInfo;
+    // setEvents([...events, { start, end, title: data, id: uuid() }]);
+    const autoId = uuid(); 
+    await setDoc(doc(collection(db, `users/${localStorage.getItem('id')}/events`), autoId), {
+      start: `${startStr}`,
+      end: `${endStr}`,
+      title: data,
+      id: autoId,
+    });
     setOpen(false);
+    getEventFromFireStore();
   }
+
+  const getEventFromFireStore = async () => {
+    setEvents([]);
+    const querySnapshot = await getDocs(collection(db, `users/${localStorage.getItem('id')}/events`));
+    // querySnapshot.forEach((doc) => {
+    //   setItems(aff => [...aff, doc.data().name]);
+    //   // doc.data() is never undefined for query doc snapshots
+    //   console.log(doc.id, " => ", doc.data().name);
+    // });
+    const newArray = querySnapshot.docs.map((doc) => {
+      var obj = {
+        start: doc.data().start,
+        end: doc.data().end,
+        title: doc.data().title,
+        id: doc.data().id,
+      }
+      return obj;
+    });
+    setEvents(newArray);
+    console.log(newArray)
+    // console.log(querySnapshot.data());
+  }
+
+  const deleteEventFromFirestore = async (dataId) => {
+    await deleteDoc(doc(collection(db, `users/${localStorage.getItem('id')}/events`), `${dataId}`));
+    getEventFromFireStore();
+  }
+
+  const handleEventDrop = async(info) => {
+    await updateDoc(doc(collection(db, `users/${localStorage.getItem('id')}/events`),info.event.id ), {
+      start: info.event.startStr,
+    })
+  }
+
+  useEffect(() => {
+    getEventFromFireStore();
+  }, [])
+
 
   // const handleSelect = (info) => {
   //   const { start, end } = info;
@@ -119,6 +170,7 @@ const Calendar = () => {
         editable
         selectable
         selectMirror
+        eventDrop={handleEventDrop}
         select={handleOpen}
         events={events}
         eventClick={deleteEvent}
