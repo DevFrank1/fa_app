@@ -167,6 +167,17 @@ const Calendar = () => {
           center: 'title',
           right: 'dayGridMonth,timeGridWeek,timeGridDay'
         }}
+        footerToolbar={{
+          left: 'button1'
+        }}
+        customButtons={{
+          button1: {
+            text: 'button1',
+            click: function() {
+              console.log('button1');
+            }
+          }
+        }}
         validRange={{
           start: format(new Date(), 'yyyy-MM-dd')
         }}
