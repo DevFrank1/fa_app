@@ -17,6 +17,8 @@ import { db, auth } from '../../../firebaseConfig';
 import { collection, addDoc, setDoc, doc, getDoc, updateDoc, deleteDoc, getDocs } from '@firebase/firestore';
 import { async } from '@firebase/util';
 
+import { format, compareAsc } from 'date-fns';
+
 const style = {
   position: 'absolute',
   top: '50%',
@@ -41,7 +43,7 @@ const Calendar = () => {
   };
 
   const deleteEvent = (click) => {
-    click.event.remove();
+    deleteEventFromFirestore(click.event.id);
   }
 
   function renderDayViewDetail(event) {
@@ -97,7 +99,7 @@ const Calendar = () => {
   const addData = async () => {
     const { startStr, endStr } = eventInfo;
     // setEvents([...events, { start, end, title: data, id: uuid() }]);
-    const autoId = uuid(); 
+    const autoId = uuid();
     await setDoc(doc(collection(db, `users/${localStorage.getItem('id')}/events`), autoId), {
       start: `${startStr}`,
       end: `${endStr}`,
@@ -135,8 +137,8 @@ const Calendar = () => {
     getEventFromFireStore();
   }
 
-  const handleEventDrop = async(info) => {
-    await updateDoc(doc(collection(db, `users/${localStorage.getItem('id')}/events`),info.event.id ), {
+  const handleEventDrop = async (info) => {
+    await updateDoc(doc(collection(db, `users/${localStorage.getItem('id')}/events`), info.event.id), {
       start: info.event.startStr,
     })
   }
@@ -164,6 +166,9 @@ const Calendar = () => {
           left: 'prev,next today',
           center: 'title',
           right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        }}
+        validRange={{
+          start: format(new Date(), 'yyyy-MM-dd')
         }}
         height='100%'
         contentHeight='100%'
