@@ -66,6 +66,7 @@ const SideBar = () => {
                         <MenuItem>Analytics 1.1711</MenuItem> */}
                     {/* </SubMenu> */}
                     <MenuItem routerLink={<Link to='/home/activity' />}>Activity</MenuItem>
+                    <MenuItem routerLink={<Link to='/home/tasks' />}>Tasks</MenuItem>
                     <MenuItem routerLink={<Link to='/home/timeline' />}>Timeline</MenuItem>
                     <MenuItem routerLink={<Link to='/home/calendar' />}>Calendar</MenuItem>
                     <MenuItem routerLink={<Link to='/home/todolist' />}>Todo List</MenuItem>

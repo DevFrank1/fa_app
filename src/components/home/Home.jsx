@@ -24,6 +24,7 @@ import Calendar from './calendar/Calendar';
 import Todolist from './todolist/Todolist';
 import NotFound from './notfound/NotFound';
 import Activity from './activity/Activity';
+import Tasks from './tasks/Tasks';
 
 const Home = () => {
 
@@ -59,6 +60,7 @@ const Home = () => {
                     <Routes>
                         <Route path='overview' element={<Overview />} />
                         <Route path='activity' element={<Activity />} />
+                        <Route path='tasks' element={<Tasks />} />
                         <Route path='timeline' element={<TimeLine />} />
                         <Route path='calendar' element={<Calendar />} />
                         <Route path='todolist' element={<Todolist />} />
