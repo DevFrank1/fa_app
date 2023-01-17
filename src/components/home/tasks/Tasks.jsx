@@ -1,9 +1,12 @@
 import { Box } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './tasks.css';
 
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { v4 as uuid } from 'uuid';
+
+import { db, auth } from '../../../firebaseConfig';
+import { collection, addDoc, setDoc, doc, getDoc, updateDoc, deleteDoc, getDocs } from '@firebase/firestore';
 
 const itemsFromBackend = [
   { id: uuid(), content: "First task" },
@@ -19,19 +22,19 @@ const itemsFromBackend = [
 ];
 
 const columnsFromBackend = {
-  [uuid()]: {
+  requested: {
     name: "Requested",
     items: itemsFromBackend
   },
-  [uuid()]: {
+  todo: {
     name: "To do",
     items: []
   },
-  [uuid()]: {
+  inprogress: {
     name: "In Progress",
     items: []
   },
-  [uuid()]: {
+  done: {
     name: "Done",
     items: []
   }
@@ -75,7 +78,40 @@ const onDragEnd = (result, columns, setColumns) => {
 };
 
 const Tasks = () => {
-  const [columns, setColumns] = useState(columnsFromBackend);
+  const [columns, setColumns] = useState({});
+
+  const addTask = async () => {
+    // setItems(arr => [...arr, todoValue]);
+    setOpen(false);
+    await addDoc(collection(db, `users/${localStorage.getItem('id')}/tasks`), {
+      name: `${todoValue}`,
+    });
+    setTodoValue('');
+    getDataFromFireStore();
+  }
+
+  const getDataFromFireStore = async () => {
+    setColumns([]);
+    const querySnapshot = await getDocs(collection(db, `users/${localStorage.getItem('id')}/tasks`));
+    // querySnapshot.forEach((doc) => {
+    //   setItems(aff => [...aff, doc.data().name]);
+    //   // doc.data() is never undefined for query doc snapshots
+    //   console.log(doc.id, " => ", doc.data().name);
+    // });
+    const newArray = querySnapshot.docs.map((doc) => {
+      return {
+        ...doc.data(),
+      }
+    });
+    setColumns(newArray);
+    // console.log(querySnapshot.data());
+  }
+
+  useEffect(() => {
+    // const docRef = doc(db, `users/${auth.currentUser.uid}/todo`)
+    getDataFromFireStore();
+  }, []);
+
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%', padding: '1rem' }}>
       <DragDropContext
