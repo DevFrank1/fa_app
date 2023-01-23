@@ -11,7 +11,7 @@ import { margin, width } from '@mui/system';
 import AddIcon from '@mui/icons-material/Add';
 
 import { db, auth } from '../../../firebaseConfig';
-import { collection, addDoc, setDoc, doc, getDoc, updateDoc, arrayUnion, deleteDoc, getDocs } from '@firebase/firestore';
+import { collection, addDoc, setDoc, doc, getDoc, updateDoc, arrayUnion, arrayRemove, deleteDoc, getDocs } from '@firebase/firestore';
 
 const itemsFromBackend = [
   { id: uuid(), content: "First task" },
@@ -45,7 +45,7 @@ const columnsFromBackend = {
   }
 };
 
-const onDragEnd = (result, columns, setColumns) => {
+const onDragEnd = async (result, columns, setColumns) => {
   if (!result.destination) return;
   const { source, destination } = result;
 
@@ -80,6 +80,11 @@ const onDragEnd = (result, columns, setColumns) => {
       }
     });
   }
+
+  await updateDoc(doc(collection(db, `users/${localStorage.getItem('id')}/tasks`), 'done'),);
+  await updateDoc(doc(collection(db, `users/${localStorage.getItem('id')}/tasks`), 'done'), {
+    items: [columns['done'].items]
+  });
 };
 
 const style = {
@@ -120,7 +125,10 @@ const Tasks = () => {
     //   name: `${todoValue}`,
     // });
     await updateDoc(doc(collection(db, `users/${localStorage.getItem('id')}/tasks`), 'done'), {
-      items: arrayUnion({ id: '12wqdwqdw345', content: 'laargqwddqwqe task' })
+      items: arrayUnion({ id: 'task 2', content: 'task 2' })
+    });
+    await updateDoc(doc(collection(db, `users/${localStorage.getItem('id')}/tasks`), 'done'), {
+      items: arrayUnion({ id: 'task 2', content: 'task 2' })
     });
     setTodoValue('');
     getDataFromFireStore();
