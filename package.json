@@ -12,6 +12,7 @@
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@firebase/auth": "^0.21.0",
+    "@firebase/firestore": "^3.8.3",
     "@fullcalendar/core": "^6.0.2",
     "@fullcalendar/daygrid": "^6.0.2",
     "@fullcalendar/interaction": "^6.0.2",

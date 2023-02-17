@@ -10,8 +10,10 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { margin, width } from '@mui/system';
 import AddIcon from '@mui/icons-material/Add';
 
+
 import { db, auth } from '../../../firebaseConfig';
-import { collection, addDoc, setDoc, doc, getDoc, updateDoc, arrayUnion, arrayRemove, deleteDoc, getDocs } from '@firebase/firestore';
+import { collection, addDoc, setDoc, doc, getDoc, updateDoc, arrayUnion, arrayRemove, deleteField, deleteDoc, getDocs } from '@firebase/firestore';
+import { async } from '@firebase/util';
 
 const itemsFromBackend = [
   { id: uuid(), content: "First task" },
@@ -27,13 +29,9 @@ const itemsFromBackend = [
 ];
 
 const columnsFromBackend = {
-  requested: {
-    name: "Requested",
-    items: itemsFromBackend
-  },
   todo: {
     name: "To do",
-    items: []
+    items: itemsFromBackend
   },
   inprogress: {
     name: "In Progress",
@@ -43,48 +41,6 @@ const columnsFromBackend = {
     name: "Done",
     items: []
   }
-};
-
-const onDragEnd = async (result, columns, setColumns) => {
-  if (!result.destination) return;
-  const { source, destination } = result;
-
-  if (source.droppableId !== destination.droppableId) {
-    const sourceColumn = columns[source.droppableId];
-    const destColumn = columns[destination.droppableId];
-    const sourceItems = [...sourceColumn.items];
-    const destItems = [...destColumn.items];
-    const [removed] = sourceItems.splice(source.index, 1);
-    destItems.splice(destination.index, 0, removed);
-    setColumns({
-      ...columns,
-      [source.droppableId]: {
-        ...sourceColumn,
-        items: sourceItems
-      },
-      [destination.droppableId]: {
-        ...destColumn,
-        items: destItems
-      }
-    });
-  } else {
-    const column = columns[source.droppableId];
-    const copiedItems = [...column.items];
-    const [removed] = copiedItems.splice(source.index, 1);
-    copiedItems.splice(destination.index, 0, removed);
-    setColumns({
-      ...columns,
-      [source.droppableId]: {
-        ...column,
-        items: copiedItems
-      }
-    });
-  }
-
-  await updateDoc(doc(collection(db, `users/${localStorage.getItem('id')}/tasks`), 'done'),);
-  await updateDoc(doc(collection(db, `users/${localStorage.getItem('id')}/tasks`), 'done'), {
-    items: [columns['done'].items]
-  });
 };
 
 const style = {
@@ -104,6 +60,7 @@ const Tasks = () => {
 
   const [items, setItems] = useState([]);
   const [todoValue, setTodoValue] = useState('');
+  const [todoValueName, setTodoValueName] = useState('');
 
   const [item, setItem] = useState('');
 
@@ -117,6 +74,9 @@ const Tasks = () => {
   const handleChange = (data) => {
     setTodoValue(data);
   }
+  const handleChangeName = (data) => {
+    setTodoValueName(data);
+  }
 
   const addTask = async () => {
     // setItems(arr => [...arr, todoValue]);
@@ -124,14 +84,14 @@ const Tasks = () => {
     // await addDoc(collection(db, `users/${localStorage.getItem('id')}/tasks`), {
     //   name: `${todoValue}`,
     // });
-    await updateDoc(doc(collection(db, `users/${localStorage.getItem('id')}/tasks`), 'done'), {
-      items: arrayUnion({ id: 'task 2', content: 'task 2' })
+    await updateDoc(doc(collection(db, `users/${localStorage.getItem('id')}/tasks`), `${todoValueName}`), {
+      items: arrayUnion({ id: `${todoValue}`, content: `${todoValue}` })
+    }).then(() => {
+      setTodoValue('');
+      setTodoValueName('');
     });
-    await updateDoc(doc(collection(db, `users/${localStorage.getItem('id')}/tasks`), 'done'), {
-      items: arrayUnion({ id: 'task 2', content: 'task 2' })
-    });
-    setTodoValue('');
     getDataFromFireStore();
+    console.log(columns)
   }
 
   const getDataFromFireStore = async () => {
@@ -147,14 +107,159 @@ const Tasks = () => {
         ...doc.data(),
       }
     });
+    const obj = Object.fromEntries(newArray);
+    console.log(newArray);
     setColumns(newArray);
     // console.log(querySnapshot.data());
   }
+
+  const deleteById = id => {
+    setColumns(oldValues => {
+      return oldValues.filter(col => col.id !== id)
+    })
+  }
+  function handleRemove(id) {
+    const newList = list.filter((item) => item.id !== id);
+
+    setList(newList);
+  }
+
+  // const handleDelete = (itemId) => {
+  //   const newColumns = { ...columns };
+  //   Object.keys(newColumns).forEach((columnId) => {
+  //     const items = newColumns[columnId].items.filter((item) => item.id !== itemId);
+  //     newColumns[columnId].items = items;
+  //   });
+  //   setColumns((prevState) => ({ ...prevState, columns: newColumns }));
+  // };
+
+  const handleDelete = (columnId, itemIndex) => {
+    setColumns((prevState) => {
+      const newColumn = {
+        ...prevState[columnId],
+        items: prevState[columnId].items.filter((item, index) => index !== itemIndex),
+      };
+      return {
+        ...prevState,
+        [columnId]: newColumn,
+      };
+    })
+  };
 
   useEffect(() => {
     // const docRef = doc(db, `users/${auth.currentUser.uid}/todo`)
     getDataFromFireStore();
   }, []);
+
+  useEffect(() => {
+    // const docRef = doc(db, `users/${auth.currentUser.uid}/todo`)
+    updateFile();
+  }, [columns]);
+
+  // useEffect(() => {
+  //   // const docRef = doc(db, `users/${auth.currentUser.uid}/todo`)
+  //   updateFile()
+  // }, [columns.done]);
+
+  const onDragEnd = (result, columns, setColumns) => {
+    if (!result.destination) return;
+    const { source, destination } = result;
+
+    if (source.droppableId !== destination.droppableId) {
+      const sourceColumn = columns[source.droppableId];
+      const destColumn = columns[destination.droppableId];
+      const sourceItems = [...sourceColumn.items];
+      const destItems = [...destColumn.items];
+      const [removed] = sourceItems.splice(source.index, 1);
+      destItems.splice(destination.index, 0, removed);
+      setColumns({
+        ...columns,
+        [source.droppableId]: {
+          ...sourceColumn,
+          items: sourceItems
+        },
+        [destination.droppableId]: {
+          ...destColumn,
+          items: destItems
+        }
+      });
+    } else {
+      const column = columns[source.droppableId];
+      const copiedItems = [...column.items];
+      const [removed] = copiedItems.splice(source.index, 1);
+      copiedItems.splice(destination.index, 0, removed);
+      setColumns({
+        ...columns,
+        [source.droppableId]: {
+          ...column,
+          items: copiedItems
+        }
+      });
+    }
+
+    // await updateDoc(doc(collection(db, `users/${localStorage.getItem('id')}/tasks`), 'done'), {
+    //   items: []
+    // });
+    // await updateDoc(doc(collection(db, `users/${localStorage.getItem('id')}/tasks`), 'done'), {
+    //   items: arrayUnion(columns.done.items)
+    // });
+
+    // updateFile().then(() => {
+    //   getDataFromFireStore();
+    // });
+    console.log(columns);
+    updateFile().then(() => {
+      getDataFromFireStore();
+    });
+  };
+
+  const updateFile = async () => {
+    // await updateDoc(doc(collection(db, `users/${localStorage.getItem('id')}/tasks`), 'done'), {
+    //   items: []
+    // });
+    // await updateDoc(doc(collection(db, `users/${localStorage.getItem('id')}/tasks`), 'done'), {
+    //   items: arrayUnion(
+    //     columns[0].items.map((item) => {
+    //       return {
+    //         id: item.id,
+    //         content: item.content
+    //       }
+    //     })
+    //   )
+    // });
+
+    const checkNull = (data) => {
+      const checkData = data;
+      if (checkData.legth === 0) {
+        return []
+      } else {
+        return { ...checkData }
+      };
+    }
+
+    const doneDocData = {
+      name: columns[0].name,
+      items: [...columns[0].items]
+    }
+    const inprogressDocData = {
+      name: columns[1].name,
+      items: [...columns[1].items]
+    }
+    const todoDocData = {
+      name: columns[2].name,
+      items: [...columns[2].items]
+    }
+
+    await setDoc(doc(collection(db, `users/${localStorage.getItem('id')}/tasks`), 'done'), doneDocData);
+    await setDoc(doc(collection(db, `users/${localStorage.getItem('id')}/tasks`), 'inprogress'), inprogressDocData);
+    await setDoc(doc(collection(db, `users/${localStorage.getItem('id')}/tasks`), 'todo'), todoDocData);
+
+
+    // await updateDoc(doc(collection(db, `users/${localStorage.getItem('id')}/tasks`), 'done'), {
+    //   name: 'Done',
+    //   items: arrayUnion(columns[0].items[0])
+    // });
+  }
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%', }}>
@@ -175,6 +280,11 @@ const Tasks = () => {
               <Input
                 value={todoValue}
                 onChange={e => handleChange(e.target.value)}
+                disableUnderline
+              />
+              <Input
+                value={todoValueName}
+                onChange={e => handleChangeName(e.target.value)}
                 disableUnderline
               />
               <IconButton onClick={addTask}>
@@ -241,6 +351,9 @@ const Tasks = () => {
                                       }}
                                     >
                                       {item.content}
+                                      <IconButton >
+                                        <DeleteIcon onClick={() => handleDelete(columnId, index)} />
+                                      </IconButton>
                                     </div>
                                   );
                                 }}
