@@ -6,11 +6,13 @@ import { Link } from 'react-router-dom';
 
 import { Sidebar, sidebarClasses, SubMenu, Menu, menuClasses, MenuItem } from 'react-pro-sidebar';
 
-import { auth } from '../../../firebaseConfig';
+import { db, auth } from '../../../firebaseConfig';
 
 import { signOut } from 'firebase/auth';
 
 import { useNavigate } from "react-router-dom";
+
+import { collection, addDoc, setDoc, doc, getDoc, updateDoc, arrayUnion, arrayRemove, deleteField, deleteDoc, getDocs } from '@firebase/firestore';
 
 const SideBar = () => {
 
@@ -33,6 +35,35 @@ const SideBar = () => {
     useEffect(() => {
         console.log('logout');
     }, []);
+
+    const createTaskScala = async () => {
+        const doneDocData = {
+            name: 'Done',
+            items: []
+        }
+        const inprogressDocData = {
+            name: 'In Progress',
+            items: []
+        }
+        const todoDocData = {
+            name: 'To Do',
+            items: []
+        }
+
+        const data = {
+            name: "John",
+            age: 35,
+            city: "New York"
+        };
+
+        await setDoc(doc(collection(db, `users/${localStorage.getItem('id')}/tasks`), 'done'), doneDocData);
+        await setDoc(doc(collection(db, `users/${localStorage.getItem('id')}/tasks`), 'inprogress'), inprogressDocData);
+        await setDoc(doc(collection(db, `users/${localStorage.getItem('id')}/tasks`), 'todo'), todoDocData);
+
+        // await addDoc(collection(db, `users/${localStorage.getItem('id')}/task`), {
+        //     name: 'To Do',
+        // });
+    }
 
     return (
         <Box>
@@ -66,7 +97,7 @@ const SideBar = () => {
                         <MenuItem>Analytics 1.1711</MenuItem> */}
                     {/* </SubMenu> */}
                     <MenuItem routerLink={<Link to='/home/activity' />}>Activity</MenuItem>
-                    <MenuItem routerLink={<Link to='/home/tasks' />}>Tasks</MenuItem>
+                    <MenuItem routerLink={<Link to='/home/tasks' />} onClick={createTaskScala}>Tasks</MenuItem>
                     <MenuItem routerLink={<Link to='/home/timeline' />}>Timeline</MenuItem>
                     <MenuItem routerLink={<Link to='/home/calendar' />}>Calendar</MenuItem>
                     <MenuItem routerLink={<Link to='/home/todolist' />}>Todo List</MenuItem>
