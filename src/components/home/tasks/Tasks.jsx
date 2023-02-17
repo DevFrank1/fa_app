@@ -90,8 +90,41 @@ const Tasks = () => {
       setTodoValue('');
       setTodoValueName('');
     });
-    getDataFromFireStore();
+
+    switch (todoValueName) {
+      case 'done':
+        setColumns((prevState) => ({
+          ...prevState,
+          0: {
+            ...prevState[0],
+            items: [...prevState[0].items, { id: `${todoValue}`, content: `${todoValue}` }],
+          }
+        }));
+        break;
+      case 'inprogress':
+        setColumns((prevState) => ({
+          ...prevState,
+          1: {
+            ...prevState[1],
+            items: [...prevState[1].items, { id: `${todoValue}`, content: `${todoValue}` }],
+          }
+        }));
+        break;
+      case 'todo':
+        setColumns((prevState) => ({
+          ...prevState,
+          2: {
+            ...prevState[2],
+            items: [...prevState[2].items, { id: `${todoValue}`, content: `${todoValue}` }],
+          }
+        }));
+        break;
+      default:
+        break;
+    }
+    // getDataFromFireStore();
     console.log(columns)
+
   }
 
   const getDataFromFireStore = async () => {
@@ -155,7 +188,7 @@ const Tasks = () => {
     // const docRef = doc(db, `users/${auth.currentUser.uid}/todo`)
     updateFile();
   }, [columns]);
-  
+
 
   // useEffect(() => {
   //   // const docRef = doc(db, `users/${auth.currentUser.uid}/todo`)
@@ -209,9 +242,9 @@ const Tasks = () => {
     //   getDataFromFireStore();
     // });
     console.log(columns);
-    updateFile().then(() => {
-      getDataFromFireStore();
-    });
+    // updateFile().then(() => {
+    //   getDataFromFireStore();
+    // });
   };
 
   const updateFile = async () => {
@@ -352,8 +385,8 @@ const Tasks = () => {
                                       }}
                                     >
                                       {item.content}
-                                      <IconButton >
-                                        <DeleteIcon onClick={() => handleDelete(columnId, index)} />
+                                      <IconButton onClick={() => handleDelete(columnId, index)}>
+                                        <DeleteIcon />
                                       </IconButton>
                                     </div>
                                   );

@@ -37,6 +37,8 @@ const SideBar = () => {
     }, []);
 
     const createTaskScala = async () => {
+
+        const docRef = doc(collection(db, `users/${localStorage.getItem('id')}/tasks`), 'done');
         const doneDocData = {
             name: 'Done',
             items: []
@@ -56,9 +58,22 @@ const SideBar = () => {
             city: "New York"
         };
 
-        await setDoc(doc(collection(db, `users/${localStorage.getItem('id')}/tasks`), 'done'), doneDocData);
-        await setDoc(doc(collection(db, `users/${localStorage.getItem('id')}/tasks`), 'inprogress'), inprogressDocData);
-        await setDoc(doc(collection(db, `users/${localStorage.getItem('id')}/tasks`), 'todo'), todoDocData);
+
+        getDoc(docRef)
+            .then(async (doc) => {
+                if (doc.exists()) {
+                    console.log('data available')
+                } else {
+
+                    await setDoc(doc(collection(db, `users/${localStorage.getItem('id')}/tasks`), 'done'), doneDocData, { merge: true });
+                    await setDoc(doc(collection(db, `users/${localStorage.getItem('id')}/tasks`), 'inprogress'), inprogressDocData, { merge: true });
+                    await setDoc(doc(collection(db, `users/${localStorage.getItem('id')}/tasks`), 'todo'), todoDocData, { merge: true });
+                    console.log("Data not available.");
+                }
+            })
+            .catch((error) => {
+                console.log("Error getting document:", error);
+            });
 
         // await addDoc(collection(db, `users/${localStorage.getItem('id')}/task`), {
         //     name: 'To Do',
