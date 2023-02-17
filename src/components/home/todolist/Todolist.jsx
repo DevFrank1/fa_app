@@ -8,13 +8,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { margin, width } from '@mui/system';
 import AddIcon from '@mui/icons-material/Add';
 
-import { Reorder } from "framer-motion";
 import Item from './Item';
 
 import { db, auth } from '../../../firebaseConfig';
 import { collection, addDoc, setDoc, doc, getDoc, deleteDoc, getDocs } from '@firebase/firestore';
 
 import { v4 as uuid } from 'uuid';
+
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 const initialItems = [];
 
@@ -32,7 +33,46 @@ const style = {
   p: 4,
 };
 
+const getItems = count =>
+  Array.from({ length: count }, (v, k) => k).map(k => ({
+    id: `item-${k}`,
+    content: `item ${k}`
+  }));
+
+// a little function to help us with reordering the result
+const reorder = (list, startIndex, endIndex) => {
+  const result = Array.from(list);
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
+
+  return result;
+};
+
+const grid = 8;
+
+const getItemStyle = (isDragging, draggableStyle) => ({
+  // some basic styles to make the items look a bit nicer
+  userSelect: "none",
+  padding: '0.2rem 6rem',
+  margin: `0.1rem`,
+
+  // change background colour if dragging
+  background: isDragging ? "lightgreen" : "grey",
+
+  // styles we need to apply on draggables
+  ...draggableStyle
+});
+
+const getListStyle = isDraggingOver => ({
+  background: isDraggingOver ? "lightblue" : "lightgrey",
+  padding: grid,
+  width: '100%',
+  height: '100%'
+});
+
 const Todolist = () => {
+
+  // const [items, setItems] = useState(getItems(10));
 
   const [items, setItems] = useState([]);
   const [todoValue, setTodoValue] = useState('');
@@ -92,6 +132,23 @@ const Todolist = () => {
   //   // const docRef = doc(db, `users/${auth.currentUser.uid}/todo`)
   // }, [items])
 
+  ///////////////////////////////
+
+  function onDragEnd(result) {
+    // dropped outside the list
+    if (!result.destination) {
+      return;
+    }
+
+    const reorderedItems = reorder(
+      items,
+      result.source.index,
+      result.destination.index
+    );
+
+    setItems(reorderedItems);
+  }
+
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%', height: 'calc(100vh - 64px)' }}>
@@ -125,11 +182,41 @@ const Todolist = () => {
           </Modal>
         </div>
       </Toolbar>
-      <Reorder.Group className='reorder' axis="y" onReorder={setItems} values={items} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', width: '100%', height: '100%', padding: '1rem', }}>
+      {/* <Reorder.Group className='reorder' axis="y" onReorder={setItems} values={items} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', width: '100%', height: '100%', padding: '1rem', }}>
         {items.map((item) => (
           <Item key={uuid()} item={item} deleteFunction={deleteDataFromFirestore} />
         ))}
-      </Reorder.Group>
+      </Reorder.Group> */}
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="droppable">
+          {(provided, snapshot) => (
+            <div
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+              style={getListStyle(snapshot.isDraggingOver)}
+            >
+              {items.map((item, index) => (
+                <Draggable key={item.id} draggableId={item.id} index={index}>
+                  {(provided, snapshot) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      style={getItemStyle(
+                        snapshot.isDragging,
+                        provided.draggableProps.style
+                      )}
+                    >
+                      <Item item={item} deleteFunction={deleteDataFromFirestore}/>
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
     </Box>
   )
 }
