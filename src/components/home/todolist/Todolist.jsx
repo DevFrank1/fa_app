@@ -141,10 +141,10 @@ const Todolist = () => {
     getDataFromFireStore();
   }, []);
 
-  useEffect(() => {
-    // const docRef = doc(db, `users/${auth.currentUser.uid}/todo`)
-    updateFile();
-  }, [items]);
+  // useEffect(() => {
+  //   // const docRef = doc(db, `users/${auth.currentUser.uid}/todo`)
+  //   updateFile();
+  // }, [items]);
 
   // useEffect(() => {
   //   // const docRef = doc(db, `users/${auth.currentUser.uid}/todo`)
@@ -165,6 +165,7 @@ const Todolist = () => {
     );
 
     setItems(reorderedItems);
+    updateFile();
   }
 
   const updateFile = async () => {
