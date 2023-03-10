@@ -37,7 +37,7 @@ const Item = ({ item, deleteFunction }) => {
                 alignItems: 'center',
             }}>
                 <Checkbox edge='start' sx={{ mr: '1rem' }} />
-                <Typography sx={{ textDecoration: 'line-through', }}>{item.content}</Typography>
+                <Typography sx={{ textDecoration: 'line-through', }}>{item.name}</Typography>
             </Box>
             <IconButton edge='end' onClick={() => deleteFunction(item.id)}>
                 <DeleteIcon />

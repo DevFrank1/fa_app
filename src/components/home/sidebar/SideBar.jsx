@@ -80,6 +80,33 @@ const SideBar = () => {
         // });
     }
 
+    const createTodoScala = async () => {
+
+        const docRef = doc(collection(db, `users/${localStorage.getItem('id')}/todo`), 'done');
+        const doneTodoData = {
+            files: []
+        }
+
+
+        getDoc(docRef)
+            .then(async (doc) => {
+                if (doc.exists()) {
+                    console.log('data available')
+                } else {
+
+                    await setDoc(doc(collection(db, `users/${localStorage.getItem('id')}/todo`), 'done'), doneTodoData, { merge: true });
+                    console.log("Data not available.");
+                }
+            })
+            .catch((error) => {
+                console.log("Error getting document:", error);
+            });
+
+        // await addDoc(collection(db, `users/${localStorage.getItem('id')}/task`), {
+        //     name: 'To Do',
+        // });
+    }
+
     return (
         <Box>
             <Sidebar rootStyles={{
@@ -115,7 +142,7 @@ const SideBar = () => {
                     <MenuItem routerLink={<Link to='/home/tasks' />} onClick={createTaskScala}>Tasks</MenuItem>
                     <MenuItem routerLink={<Link to='/home/timeline' />}>Timeline</MenuItem>
                     <MenuItem routerLink={<Link to='/home/calendar' />}>Calendar</MenuItem>
-                    <MenuItem routerLink={<Link to='/home/todolist' />}>Todo List</MenuItem>
+                    <MenuItem routerLink={<Link to='/home/todolist' />} onClick={createTodoScala}>Todo List</MenuItem>
                     <MenuItem routerLink={<Link to='/home/pomodorotimer' />}>Pomodoro Timer</MenuItem>
                 </Menu>
                 <Divider sx={{ height: '1.5px', width: '100%', bgcolor: 'yellow' }} />

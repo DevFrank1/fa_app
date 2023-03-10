@@ -11,7 +11,7 @@ import AddIcon from '@mui/icons-material/Add';
 import Item from './Item';
 
 import { db, auth } from '../../../firebaseConfig';
-import { collection, addDoc, setDoc, doc, getDoc, deleteDoc, getDocs } from '@firebase/firestore';
+import { collection, addDoc, setDoc, doc, updateDoc, arrayUnion, getDoc, deleteDoc, getDocs } from '@firebase/firestore';
 
 import { v4 as uuid } from 'uuid';
 
@@ -93,11 +93,24 @@ const Todolist = () => {
   const addTodo = async () => {
     // setItems(arr => [...arr, todoValue]);
     setOpen(false);
-    await addDoc(collection(db, `users/${localStorage.getItem('id')}/todo`), {
-      name: `${todoValue}`,
+    // await addDoc(collection(db, `users/${localStorage.getItem('id')}/todo`), {
+    //   name: `${todoValue}`,
+    // });
+
+    await updateDoc(doc(collection(db, `users/${localStorage.getItem('id')}/todo`), `done`), {
+      files: arrayUnion({ id: `${uuid()}`, content: `${todoValue}` })
+    }
+    ).then(() => {
+      const updatedItems = [...items, {
+        id: `${uuid()}`, content: `${todoValue}`
+      }];
+      setItems(updatedItems);
+    }).then(() => {
+      setTodoValue('');
     });
-    setTodoValue('');
-    getDataFromFireStore();
+
+    console.log(items);
+    // getDataFromFireStore();
   }
 
   const getDataFromFireStore = async () => {
@@ -110,11 +123,11 @@ const Todolist = () => {
     // });
     const newArray = querySnapshot.docs.map((doc) => {
       return {
-        id: doc.id,
         ...doc.data(),
       }
     });
-    setItems(newArray);
+    setItems(newArray[0].files);
+    console.log(newArray)
     // console.log(querySnapshot.data());
   }
 
@@ -127,6 +140,11 @@ const Todolist = () => {
     // const docRef = doc(db, `users/${auth.currentUser.uid}/todo`)
     getDataFromFireStore();
   }, []);
+
+  useEffect(() => {
+    // const docRef = doc(db, `users/${auth.currentUser.uid}/todo`)
+    updateFile();
+  }, [items]);
 
   // useEffect(() => {
   //   // const docRef = doc(db, `users/${auth.currentUser.uid}/todo`)
@@ -147,6 +165,20 @@ const Todolist = () => {
     );
 
     setItems(reorderedItems);
+  }
+
+  const updateFile = async () => {
+
+    // const doneTodoData = {
+    //   items: [...items]
+    // }
+
+    console.log(items)
+
+    await setDoc(doc(collection(db, `users/${localStorage.getItem('id')}/todo`), 'done'), {
+      files: [...items]
+    });
+
   }
 
 
@@ -189,32 +221,37 @@ const Todolist = () => {
       </Reorder.Group> */}
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="droppable">
-          {(provided, snapshot) => (
-            <div
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-              style={getListStyle(snapshot.isDraggingOver)}
-            >
-              {items.map((item, index) => (
-                <Draggable key={item.id} draggableId={item.id} index={index}>
-                  {(provided, snapshot) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      style={getItemStyle(
-                        snapshot.isDragging,
-                        provided.draggableProps.style
-                      )}
-                    >
-                      <Item item={item} deleteFunction={deleteDataFromFirestore}/>
-                    </div>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </div>
-          )}
+          {(provided, snapshot) => {
+            return (
+              <div
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                style={getListStyle(snapshot.isDraggingOver)}
+              >
+                {items?.map((item, index) => (
+                  <Draggable key={item.id} draggableId={item.id} index={index}>
+                    {(provided, snapshot) => {
+                      return (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          style={getItemStyle(
+                            snapshot.isDragging,
+                            provided.draggableProps.style
+                          )}
+                        >
+                          <Item item={item} deleteFunction={deleteDataFromFirestore} />
+                        </div>
+                      )
+                    }}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+
+            )
+          }}
         </Droppable>
       </DragDropContext>
     </Box>
